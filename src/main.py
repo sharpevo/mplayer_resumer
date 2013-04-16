@@ -10,7 +10,7 @@ class Resumer():
         self.db_file = self.get_db_file()
         self.db_object = self.get_db_object()
         self.file_to_play = file_to_play
-        self.amendment = 0 #-5 # time to roll back
+        self.amendment = -5 #-5 # time to roll back
         self.options = options
 
     def get_db_file(self):
