@@ -35,7 +35,7 @@ class Resumer():
         return amend_time
 
     def parse_break_time(self, output):
-        return re.search(r"A:[\ ]*([0-9]+\.[0-9])", output).group(1)
+        return output.rpartition("A:")[2].split("V:")[0].strip()
 
     def parse_stop_status(self, output):
         if re.search(r"Exiting.*\((.*)\)", output).group(1) == "End of file":
