@@ -20,9 +20,12 @@ class Resumer():
         if not os.path.exists(self.db_file):
             return dict()
         else:
-            with open(self.db_file, "rb") as f:
-                db_object = pickle.load(f)
-            return db_object
+            return self.load_object()
+
+    def load_object(self):
+        with open(self.db_file, "rb") as f:
+            db_object = pickle.load(f)
+        return db_object
 
     def get_break_time(self):
         break_time = self.get_db_object().get(self.file_to_play, 0)
