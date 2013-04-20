@@ -10,7 +10,7 @@ class Resumer():
     def __init__(self, file_to_play, options=[]):
         self.db_file = self.get_db_file()
         self.db_object = self.get_db_object()
-        self.file_to_play = file_to_play
+        self.file_to_play = self.get_file_abspath(file_to_play)
         self.amendment = -5  # time to roll back
         self.options = options
 
@@ -22,6 +22,9 @@ class Resumer():
             return dict()
         else:
             return self.load_object()
+
+    def get_file_abspath(self, file_path):
+        return os.path.abspath(file_path)
 
     def load_object(self):
         with open(self.db_file, "rb") as f:
