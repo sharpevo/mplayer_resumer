@@ -6,7 +6,7 @@ import re
 import subprocess
 
 
-class Resumer():
+class Player():
     def __init__(self, file_to_play, options=[]):
         self.db_file = self.get_db_file()
         self.db_object = self.get_db_object()
@@ -66,5 +66,5 @@ class Resumer():
 
 if __name__ == "__main__":
 
-    resumer = Resumer(sys.argv[1], options=sys.argv[2:])
-    resumer.play_file()
+    player = Player(sys.argv[1], options=sys.argv[2:])
+    player.play_file()
