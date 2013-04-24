@@ -6,10 +6,10 @@ import re
 import subprocess
 
 
-class Player():
+class Player:
     def __init__(self, file_to_play, options=[]):
         self.file_to_play = self.get_file_abspath(file_to_play)
-        self.amendment = -5  # time to roll back
+        self.time_to_rollback = -5  # time to roll back
         self.options = options
         self.history = History()
 
@@ -35,8 +35,10 @@ class Player():
         return True
 
     def play(self):
-        cmd = ["mplayer", "-ss", str(self.get_break_time()), self.file_to_play] +\
-            self.options
+        cmd = ["mplayer",
+               "-ss",
+               str(self.get_break_time()),
+               self.file_to_play] + self.options
         output = subprocess.check_output(cmd)
         self.register(output)
 
@@ -49,8 +51,7 @@ class Player():
         self.history.commit()
 
 
-
-class History():
+class History:
     def __init__(self, path="$HOME/.cache/mplayer_history.json"):
         self.db_path = self.expand_db_path(path)
         self.db = self.connect_db()
@@ -77,7 +78,6 @@ class History():
     def commit(self):
         with open(self.db_path, "w") as f:
             json.dump(self.db, f)
-
 
 
 if __name__ == "__main__":
