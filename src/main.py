@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 import sys
 import os.path
-import pickle
+import json
 import re
 import subprocess
 
@@ -47,7 +47,37 @@ class Player():
             self.history.remove(self.file_to_play)
 
         self.history.commit()
+
+
+
+class History():
+    def __init__(self, path="$HOME/.cache/mplayer_history.json"):
+        self.db_path = self.expand_db_path(path)
+        self.db = self.connect_db()
+
+    def expand_db_path(self, path):
+        return os.path.expandvars(path)
+
+    def connect_db(self):
+        if os.path.exists(self.db_path):
+            with open(self.db_path) as f:
+                return json.load(f)
         else:
+            return {}
+
+    def get_history_by_id(self, ID):
+        return self.db.get(ID, "0")
+
+    def save(self, ID, value):
+        self.db[ID] = value
+
+    def remove(self, ID):
+        self.db.pop(ID)
+
+    def commit(self):
+        with open(self.db_path, "w") as f:
+            json.dump(self.db, f)
+
 
 
 if __name__ == "__main__":
