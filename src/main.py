@@ -8,31 +8,16 @@ import subprocess
 
 class Player():
     def __init__(self, file_to_play, options=[]):
-        self.db_file = self.get_db_file()
-        self.db_object = self.get_db_object()
         self.file_to_play = self.get_file_abspath(file_to_play)
         self.amendment = -5  # time to roll back
         self.options = options
-
-    def get_db_file(self):
-        return os.path.join(os.path.expanduser("~"), ".mplayer_resume")
-
-    def get_db_object(self):
-        if not os.path.exists(self.db_file):
-            return dict()
-        else:
-            return self.load_object()
+        self.history = History()
 
     def get_file_abspath(self, file_path):
         return os.path.abspath(file_path)
 
-    def load_object(self):
-        with open(self.db_file, "rb") as f:
-            db_object = pickle.load(f)
-        return db_object
-
     def get_break_time(self):
-        break_time = self.get_db_object().get(self.file_to_play, 0)
+        break_time = self.history.get_history_by_id(self.file_to_play)
         return self.amend_break_time(break_time)
 
     def amend_break_time(self, break_time):
@@ -57,12 +42,13 @@ class Player():
 
     def register(self, output):
         if self.parse_stop_status(output):
-            self.db_object.update({self.file_to_play: self.parse_break_time(output)})
+            self.history.save(self.file_to_play, self.parse_break_time(output))
         else:
-            self.db_object.pop(self.file_to_play)
+            self.history.remove(self.file_to_play)
 
-        with open(self.db_file, "wb") as f:
-            pickle.dump(self.db_object, f, pickle.HIGHEST_PROTOCOL)
+        self.history.commit()
+        else:
+
 
 if __name__ == "__main__":
 
