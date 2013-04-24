@@ -49,13 +49,13 @@ class Player():
             return False
         return True
 
-    def play_file(self):
+    def play(self):
         cmd = ["mplayer", "-ss", str(self.get_break_time()), self.file_to_play] +\
             self.options
         output = subprocess.check_output(cmd)
-        self.save_status(output)
+        self.register(output)
 
-    def save_status(self, output):
+    def register(self, output):
         if self.parse_stop_status(output):
             self.db_object.update({self.file_to_play: self.parse_break_time(output)})
         else:
@@ -67,4 +67,4 @@ class Player():
 if __name__ == "__main__":
 
     player = Player(sys.argv[1], options=sys.argv[2:])
-    player.play_file()
+    player.play()
