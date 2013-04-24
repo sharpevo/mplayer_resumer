@@ -37,6 +37,7 @@ class Player:
 
     def play(self):
         cmd = ["mplayer",
+               "-fs",
                "-ss",
                self.get_break_time(),
                self.file_to_play] + self.options
