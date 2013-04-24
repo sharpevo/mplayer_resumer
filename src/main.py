@@ -21,10 +21,11 @@ class Player:
         return self.amend_break_time(break_time)
 
     def amend_break_time(self, break_time):
-        amend_time = float(break_time) + self.amendment
+        break_time = float(break_time)
+        amend_time = break_time + self.time_to_rollback
         if amend_time < 0:
             amend_time = break_time
-        return amend_time
+        return str(amend_time)
 
     def parse_break_time(self, output):
         return output.rpartition("A:")[2].split("V:")[0].strip()
@@ -37,7 +38,7 @@ class Player:
     def play(self):
         cmd = ["mplayer",
                "-ss",
-               str(self.get_break_time()),
+               self.get_break_time(),
                self.file_to_play] + self.options
         output = subprocess.check_output(cmd)
         self.register(output)
