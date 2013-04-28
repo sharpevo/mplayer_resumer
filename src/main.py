@@ -14,7 +14,7 @@ class Player:
         self.history = History()
 
     def get_file_abspath(self, file_path):
-        return os.path.abspath(file_path)
+        return unicode(os.path.abspath(file_path),"utf-8")
 
     def get_break_time(self):
         break_time = self.history.get_history_by_id(self.file_to_play)
