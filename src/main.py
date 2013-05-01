@@ -14,7 +14,7 @@ class Player:
         self.history = History()
 
     def get_file_abspath(self, file_path):
-        return os.path.abspath(file_path)
+        return unicode(os.path.abspath(file_path),"utf-8")
 
     def get_break_time(self):
         break_time = self.history.get_history_by_id(self.file_to_play)
@@ -37,6 +37,7 @@ class Player:
 
     def play(self):
         cmd = ["mplayer",
+               "-fs",
                "-ss",
                self.get_break_time(),
                self.file_to_play] + self.options
@@ -74,7 +75,8 @@ class History:
         self.db[ID] = value
 
     def remove(self, ID):
-        self.db.pop(ID)
+        if self.db.has_key(ID):
+            self.db.pop(ID)
 
     def commit(self):
         with open(self.db_path, "w") as f:
