@@ -75,7 +75,8 @@ class History:
         self.db[ID] = value
 
     def remove(self, ID):
-        self.db.pop(ID)
+        if self.db.has_key(ID):
+            self.db.pop(ID)
 
     def commit(self):
         with open(self.db_path, "w") as f:
