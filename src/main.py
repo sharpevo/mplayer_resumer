@@ -35,6 +35,15 @@ class Player:
             return False
         return True
 
+    def print_list(self):
+        for i,c in enumerate(self.candidate_list):
+            print i, c.rpartition("/")[2]
+
+    def gen_candidate(self):
+        self.candidate_list = []
+        for key in self.history.get_history_list():
+            self.candidate_list.append(key)
+
     def play(self):
         cmd = ["mplayer",
                "-fs",
@@ -71,6 +80,9 @@ class History:
     def get_history_by_id(self, ID):
         return self.db.get(ID, "0")
 
+    def get_history_list(self):
+        return self.db.keys()
+
     def save(self, ID, value):
         self.db[ID] = value
 
@@ -85,5 +97,9 @@ class History:
 
 if __name__ == "__main__":
 
-    player = Player(sys.argv[1], options=sys.argv[2:])
-    player.play()
+    if len(sys.argv) > 1:
+        player = Player(sys.argv[1], options=sys.argv[2:])
+        player.play()
+    else:
+        player = Player()
+        player.print_list()
