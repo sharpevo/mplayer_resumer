@@ -7,11 +7,25 @@ import subprocess
 
 
 class Player:
-    def __init__(self, file_to_play, options=[]):
-        self.file_to_play = self.get_file_abspath(file_to_play)
-        self.time_to_rollback = -5  # time to roll back
+    def __init__(self, file_to_play="", options=[]):
+
         self.options = options
+        self.time_to_rollback = -5
         self.history = History()
+        self.gen_candidate()
+        self.file_to_play = file_to_play
+
+        if file_to_play:
+            match = re.search(r"^[0-9]+$", file_to_play)
+            if match:
+                index = int(file_to_play)
+                try:
+                    self.file_to_play = self.candidate_list[index]
+                except IndexError:
+                    print "Index out of range..."
+                    self.file_to_play = ""
+            else:
+                self.file_to_play = self.get_file_abspath(file_to_play)
 
     def get_file_abspath(self, file_path):
         return unicode(os.path.abspath(file_path),"utf-8")
@@ -35,14 +49,26 @@ class Player:
             return False
         return True
 
+    def print_list(self):
+        for i,c in enumerate(self.candidate_list):
+            print i, c.rpartition("/")[2]
+
+    def gen_candidate(self):
+        self.candidate_list = []
+        for key in self.history.get_history_list():
+            self.candidate_list.append(key)
+
     def play(self):
-        cmd = ["mplayer",
-               "-fs",
-               "-ss",
-               self.get_break_time(),
-               self.file_to_play] + self.options
-        output = subprocess.check_output(cmd)
-        self.register(output)
+        if self.file_to_play:
+            cmd = ["mplayer",
+                "-fs",
+                "-ss",
+                self.get_break_time(),
+                self.file_to_play] + self.options
+            output = subprocess.check_output(cmd)
+            self.register(output)
+        else:
+            self.print_list()
 
     def register(self, output):
         if self.parse_stop_status(output):
@@ -71,6 +97,9 @@ class History:
     def get_history_by_id(self, ID):
         return self.db.get(ID, "0")
 
+    def get_history_list(self):
+        return self.db.keys()
+
     def save(self, ID, value):
         self.db[ID] = value
 
@@ -85,5 +114,8 @@ class History:
 
 if __name__ == "__main__":
 
-    player = Player(sys.argv[1], options=sys.argv[2:])
+    if len(sys.argv) > 1:
+        player = Player(file_to_play=sys.argv[1], options=sys.argv[2:])
+    else:
+        player = Player()
     player.play()
